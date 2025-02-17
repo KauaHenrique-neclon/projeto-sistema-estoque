@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/compras/menuVendas.css' %}">
+        <title>Menu de Vendas</title>
+    </head>
+    <body>
+        <div class="titulo">
+            <h1>Menu de Vendas</h1>
+        </div>
+        <div class="all">
+            <div class="frames">
+                <h1>Vendas</h1>
+                <img src="{% static 'icones/vendas/venda.png' %}" alt="">
+                <a href="{% url 'venda' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Historico</h1>
+                <img src="{% static 'icones/vendas/historico.png' %}" alt="">
+                <a href="{% url 'venda' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Dashboard</h1>
+                <img src="{% static 'icones/vendas/totalVendas.png' %}" alt="">
+                <a href="{% url 'dashboardVendas' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Devolução</h1>
+                <img src="{% static 'icones/vendas/devolucao.png' %}" alt="">
+                <a href="{% url 'devolucao' %}"><button>Acessar</button></a>
+            </div>
+        </div>
+    </body>
+</html>
