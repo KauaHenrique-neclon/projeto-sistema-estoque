@@ -40,9 +40,8 @@ def login(request):
 ####
 def home(request):
     contexto = {}
-    if request.method == 'POST':
-        hora = datetime.datetime.now().strftime('%H:%M')
-        contexto['hora'] = hora
+    hora = datetime.datetime.now().strftime('%H:%M')
+    contexto['hora'] = hora
     return render(request, 'menus/home.html',contexto)
 
 ### função do menu do estoque
@@ -73,7 +72,6 @@ def deletarProduto(request):
 #####
 def descricaoProduto(request):
     idproduto = request.POST.get('idprodutodescricao')
-    print(idproduto)
     descricao = Produto.objects.filter(idproduto=idproduto).first()
     contexto = {'descricao': descricao}
     return render(request, 'estoque/descricao.html',contexto)
@@ -115,5 +113,5 @@ def adicionarProdutos(request):
             messages.success(request, 'Produto adicionado com sucesso!')  
             return redirect('estoque')
         except:
-            messages.error(request, 'Erro ao adicionar')
+            return messages.error(request, 'Erro ao adicionar')
     return render(request, 'estoque/adicionar.html')

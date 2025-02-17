@@ -9,9 +9,9 @@ def index(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
-        padrão = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|gov|org)$"
+        padrão = r"^[a-zA-Z0-9._%+-]+@[gmail.-]+\.(com)$"
         if re.match(padrão, nome, re.IGNORECASE):
-            if senha >= 8:    
+            if len(senha) >= 8 and senha.isdigit():    
                 try:
                     novoUsuario = Usuario(
                         username = nome,
@@ -24,7 +24,7 @@ def index(request):
             else:
                 return messages.error(request, 'Senha deve ter mais de 8 caracteres')
         else:
-            return messages.error(request, 'Senha deve ser email')
+            return messages.error(request, 'Deve ser email')
     dadosUsuario = Usuario.objects.all()
     contexto = {'usuario':dadosUsuario}
     return render(request, 'usuario/usuario.html', contexto)

@@ -4,11 +4,12 @@ from django.contrib import messages
 from ..models import Produto , SaidaMercadoria, Cliente
 import datetime
 
+### função de vendas
 def index(request):
-    idproduto = request.POST.get('id_produto')
     if request.method == 'POST':
-        quantidade = request.POST.get('')
-        valor = request.POST.get('')
+        idproduto = request.POST.get('id_produto')
+        quantidade = request.POST.get('quantidade')
+        valor = request.POST.get('valor')
         try:
             venda = SaidaMercadoria(
                 quantidade = quantidade,
@@ -24,7 +25,7 @@ def index(request):
             produtoModel.save()
             return messages.success(request, 'Cadastrada com sucesso')
         except:
-            pass
+            return messages.error(request, 'Erro ao salvar dados')
     produtos = Produto.objects.all()
     contexto = {'produtos': produtos}
     return render(request, 'compras/venda.html',contexto)
