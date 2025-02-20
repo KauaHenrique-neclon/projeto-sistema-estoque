@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,7 +11,7 @@
 <body>
     <div class="container">
         <h1>Entregas Realizadas</h1>
-        <form method="GET" action="{% url 'listar_entregas' %}">
+        <form method="GET" action="{% url 'HistoricoEntregas' %}">
             <label for="mes">Escolha o Mês:</label>
             <select id="mes" name="mes" required>
                 <option value="">Selecione</option>
@@ -27,7 +29,8 @@
                 <option value="12">Dezembro</option>
             </select>
             <button type="submit">Filtrar</button>
-        </form>
+            <a href="{% url 'MenuEmpresa' %}"><button>Menu</button></a>
+        </form> 
 
         <table>
             <thead>

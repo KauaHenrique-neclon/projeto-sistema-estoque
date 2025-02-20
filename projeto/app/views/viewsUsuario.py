@@ -5,24 +5,32 @@ from ..models import Usuario
 import re
 
 
-def index(request):
+def criarUsuario(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
+        PrimeiroName = request.POST.get('firshName')
+        UltimoName = request.POST.get('lastName')
         padrão = r"^[a-zA-Z0-9._%+-]+@[gmail.-]+\.(com)$"
         if re.match(padrão, nome, re.IGNORECASE):
-            if len(senha) >= 8 and senha.isdigit():    
-                try:
-                    novoUsuario = Usuario(
-                        username = nome,
-                        password = senha
-                    )
-                    novoUsuario.save()
-                    return messages.success(request, 'Usuario criado')
-                except:
-                    return messages.error(request, 'Erro ao criar um usuario')
+            if len(senha) >= 8 and senha.isdigit():
+                if nome and senha and PrimeiroName and UltimoName:    
+                    try:
+                        novoUsuario = Usuario(
+                            username = nome,
+                            password = senha,
+                            first_name = PrimeiroName,
+                            last_name = UltimoName
+                        )
+                        novoUsuario.save()
+                        messages.success(request, 'Usuario criado')
+                        return redirect('home')
+                    except:
+                        messages.error(request, 'Erro ao criar um usuario')
+                else:
+                    messages.error(request, 'Preencha todos os dados necessarios')
             else:
-                return messages.error(request, 'Senha deve ter mais de 8 caracteres')
+                messages.error(request, 'Senha deve ter mais de 8 caracteres')
         else:
             return messages.error(request, 'Deve ser email')
     dadosUsuario = Usuario.objects.all()

@@ -4,6 +4,7 @@ from app.urls.urls import urlpatterns as urlestoque
 from app.urls.urlsCompra import urlpatterns as urlCompras
 from app.urls.urlsUsuario import urlpatterns as urlUsuario
 from app.urls.urlsEmpresa import urlpatterns as urlEmpresa
+from app.urls.urlsDashboard import urlpatterns as urlDashboard
 
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('compras/',include(urlCompras)),
     path('usuario/',include(urlUsuario)),
     path('empresa/',include(urlEmpresa)),
+    path('dashboard/',include(urlDashboard)),
 ]

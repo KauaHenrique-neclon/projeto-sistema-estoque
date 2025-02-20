@@ -15,14 +15,28 @@
             <button class="buttonAdicionar" id="buttonAdicionar" name="buttonAdicionar">Adicionar Usuário</button>
             <button class="buttonListas" id="buttonListas" name="buttonListas">Lista Usuários</button>
         </div>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         <div id="adicionar" name="adicionar" class="adicionar">
             <h2>Adicionar Usuário</h2>
-            <form id="formAdicionar">
+            <form action="{% url 'usuario' %}" id="formAdicionar" method="POST">
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="nome">Nome:</label>
+                    <label for="nome">Email:</label>
                     <input type="text" id="nome" name="nome" required>
                     <label for="nome">Senha:</label>
                     <input type="text" id="senha" name="senha" required>
+                    <label for="nome">Primeiro Nome:</label>
+                    <input type="text" id="firshName" name="firshName" required>
+                    <label for="nome">Ultimo nome:</label>
+                    <input type="text" id="lastName" name="lastName" required>
                 </div>
                 <div class="buttonSubmit">
                     <button type="submit">Adicionar</button>

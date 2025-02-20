@@ -97,3 +97,15 @@ tr {
 tr:nth-child() {
     background-color: #f2f2f2;
 }
+.messages {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.messages .success {
+    color: green;
+}
+.messages .error {
+    color: red;
+}

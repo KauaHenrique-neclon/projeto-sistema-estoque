@@ -17,7 +17,7 @@ def adicionarClientes(request):
         bairro = request.POST.get('bairro')
         rua = request.POST.get('rua')
         numero = request.POST.get('numero')
-        if not all(nome, sobrenome, telefone,email, bairro, rua, numero):
+        if nome and sobrenome and telefone and email and bairro and rua and numero:
             if len(cpf) == 11:
                 try:
                     novoClienteCpf = Cliente(
@@ -61,13 +61,17 @@ def adicionarClientes(request):
                     numero = numero
                     )
                     novoClienteCnpj.save()
-                    return messages.success(request, 'Adicionado com sucesso')
+                    messages.success(request, 'Adicionado com sucesso')
+                    return redirect('AdicionarCliente')
                 except:
-                    return messages.error(request, 'Erro ao adicionar cliente')
+                    messages.error(request, 'Erro ao adicionar cliente')
+                    return redirect('AdicionarCliente')
             else:
-                return messages.error(request, 'Preencha os 14 digitos do CNPJ')
+                messages.error(request, 'Preencha os 14 digitos do CNPJ')
+                return redirect('AdicionarCliente')
         else:
-            return messages.error(request, 'Preencha todos os dados necessarios')
+            messages.error(request, 'Preencha todos os dados necessarios')
+            return redirect('AdicionarCliente')
     return render(request, 'empresa/adicionarCliente.html')
 
 def desativarClientes(request):
@@ -79,9 +83,11 @@ def desativarClientes(request):
                 is_active = False
             )
             desativarCliente.save()
-            return render(request, 'Clinte desativado com sucesso')
+            messages.error(request, 'Clinte desativado com sucesso')
+            return redirect('MenuEmpresa')
         else:
             messages.error(request, 'Erro em desativar cliente')
+            return redirect('desativarCliente')
     else:
         messages.error(request, 'methodo não permitido')
         return redirect('estoque')
@@ -104,7 +110,8 @@ def adicionarFornecedor(request):
                 numero = numero
             )
             novoFornecedor.save()
-            return messages.success(request, 'Cadastrado com sucesso')
+            messages.success(request, 'Cadastrado com sucesso')
+            return redirect('adicionarFornecedor')
     produtos = Produto.objects.all()
     contexto = {'produtos':produtos}
     return render(request, 'empresa/fornecedor.html', contexto)
@@ -131,17 +138,26 @@ def EntregasFeitas(request):
                     quantidateUpdate = produtoUpdade.quantidade + totalRecebido
                     produtoUpdade.quantidade = quantidateUpdate
                     produtoUpdade.save()
-                    return messages.success(request, 'Entrega salva')
+                    messages.success(request, 'Entrega salva')
+                    return redirect('Entregas')
                 else:
-                    return messages.error(request, 'Adicione todos os campos necessarios')
+                    messages.error(request, 'Adicione todos os campos necessarios')
+                    return redirect('Entregas')
             else:
                 return messages.error(request,'Erro ao pegar Id do produto')
         else:
             return messages.error(request, 'Não tem um Fornecedor com esse CNPJ')
 
 def historiocoEntregas(request):
-    mes_selecionado = request.GET.get('mes', None)
-    if mes_selecionado:
-        mes = int(mes_selecionado)
-        entregas = RecebimentoMercadoria.objects.filter(datarecebeu=mes)
-    return render(request, 'empresa/historicoDeEntregas.html', {'entregas': entregas})
+    mes = request.GET.get('mes')
+    entregas = []
+    contexto = {}
+    if mes:
+        try:
+            entregas = RecebimentoMercadoria.objects.filter(datarecebeu=mes)
+            contexto = {'entregas': entregas}
+        except:
+            messages.error(request, 'Erro ao obter entregas')
+    if contexto == {}:
+        contexto = {'entregas': entregas}
+    return render(request, 'empresa/historicoDeEntregas.html', contexto)

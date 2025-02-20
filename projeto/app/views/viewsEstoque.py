@@ -47,7 +47,7 @@ def home(request):
 ### função do menu do estoque
 #####
 def estoque(request):
-    produtos = Produto.objects.all(is_active=True)
+    produtos = Produto.objects.filter(is_active=True)
     contexto = {'produtos': produtos}
     return render(request, 'estoque/estoque.html', contexto)
 
@@ -68,7 +68,6 @@ def deletarProduto(request):
             messages.error(request, 'Erro em desativar produto')
     else:
         messages.error(request, 'methodo não permitido')
-        return redirect('estoque')
 
 ### função de ver o dados completo do produto
 #####
@@ -97,6 +96,7 @@ def editarProduto(request):
                 controlado = controlado
             )
             updateProduto.save()
+            messages.success(request, 'Atualizado com sucesso')
             return redirect('estoque')
     dadosprodutos = Produto.objects.filter(idproduto=idproduto).first()
     dados = {'dados': dadosprodutos}
@@ -124,7 +124,7 @@ def adicionarProdutos(request):
                 messages.success(request, 'Produto adicionado com sucesso!')  
                 return redirect('estoque')
             except:
-                return messages.error(request, 'Erro ao adicionar')
+                messages.error(request, 'Erro ao adicionar')
         else:
-            return messages.error(request, 'Preencha todos os dados necessario')
+            messages.error(request, 'Preencha todos os dados necessario')
     return render(request, 'estoque/adicionar.html')
