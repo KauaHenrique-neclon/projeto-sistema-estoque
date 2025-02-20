@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/empresa/menuEmpresa.css' %}">
+        <title>Menu de Vendas</title>
+    </head>
+    <body>
+        <div class="titulo">
+            <h1>Menu Empresa</h1>
+        </div>
+        <div class="all">
+            <div class="frames">
+                <h1>Cadastrar Cliente</h1>
+                <img src="{% static 'icones/empresa/cliente.ico' %}" alt="">
+                <a href="{% url 'AdicionarCliente' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Fornecedor</h1>
+                <img src="{% static 'icones/empresa/entregador.png' %}" alt="">
+                <a href="{% url 'adicionarFornecedor' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Historico Entrega</h1>
+                <img src="{% static 'icones/empresa/tempoEntrega.png' %}" alt="">
+                <a href="{% url 'HistoricoEntregas' %}"><button>Acessar</button></a>
+            </div>
+            <div class="frames">
+                <h1>Deletar</h1>
+                <img src="{% static 'icones/empresa/delete.png' %}" alt="">
+                <a href="{% url 'devolucao' %}"><button>Acessar</button></a>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,147 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.contrib import messages
+from app.models import Cliente, Produto, Fornecedor, RecebimentoMercadoria
+
+#menu da empresa
+def index(request):
+    return render(request,'empresa/menuEmpresa.html')
+
+def adicionarClientes(request):
+    if 'adicionarCPF' in request.POST:
+        nome = request.POST.get('nome')
+        sobrenome = request.POST.get('sobrenome')
+        telefone = request.POST.get('telefone')
+        cpf = request.POST.get('cpf')
+        email = request.POST.get('email')
+        bairro = request.POST.get('bairro')
+        rua = request.POST.get('rua')
+        numero = request.POST.get('numero')
+        if not all(nome, sobrenome, telefone,email, bairro, rua, numero):
+            if len(cpf) == 11:
+                try:
+                    novoClienteCpf = Cliente(
+                        nome = nome,
+                        sobrenome = sobrenome,
+                        telefone = telefone,
+                        cpf = cpf,
+                        email = email,
+                        bairro = bairro,
+                        rua = rua,
+                        numero = numero
+                    )
+                    novoClienteCpf.save()
+                    return messages.success(request, 'Adicionado com sucesso')
+                except:
+                    return messages.error(request, 'Erro ao adicionar cliente')
+            else:
+                return messages.error(request, 'Preencha os 11 digitos do CPF')
+        else:
+            return messages.error(request, 'Preencha todos os dados necessario')
+    elif 'adicionarCNPJ' in request.POST:
+        nome = request.POST.get('nome')
+        sobrenome = request.POST.get('sobrenome')
+        telefone = request.POST.get('telefone')
+        cnpj = request.POST.get('cnpj')
+        email = request.POST.get('email')
+        bairro = request.POST.get('bairro')
+        rua = request.POST.get('rua')
+        numero = request.POST.get('numero')
+        if nome and sobrenome and telefone and email and bairro and rua and numero:
+            if len(cnpj) == 14:
+                try:
+                    novoClienteCnpj = Cliente(
+                    nome = nome,
+                    sobrenome = sobrenome,
+                    telefone = telefone,
+                    cnpj = cnpj,
+                    email = email,
+                    bairro = bairro,
+                    rua = rua,
+                    numero = numero
+                    )
+                    novoClienteCnpj.save()
+                    return messages.success(request, 'Adicionado com sucesso')
+                except:
+                    return messages.error(request, 'Erro ao adicionar cliente')
+            else:
+                return messages.error(request, 'Preencha os 14 digitos do CNPJ')
+        else:
+            return messages.error(request, 'Preencha todos os dados necessarios')
+    return render(request, 'empresa/adicionarCliente.html')
+
+def desativarClientes(request):
+    if request.method == 'POST':
+        idCliente = request.POST.get('')
+        if idCliente:
+            desativarCliente = Cliente(
+                idcliente = idCliente,
+                is_active = False
+            )
+            desativarCliente.save()
+            return render(request, 'Clinte desativado com sucesso')
+        else:
+            messages.error(request, 'Erro em desativar cliente')
+    else:
+        messages.error(request, 'methodo não permitido')
+        return redirect('estoque')
+
+def adicionarFornecedor(request):
+    if request.method == 'POST':
+        cnpj = request.POST.get('cnpj')
+        telefone = request.POST.get('telefone')
+        nomeEmpresa = request.POST.get('nomefornece')
+        endereco = request.POST.get('endereco')
+        bairro = request.POST.get('beirro')
+        numero = request.POST.get('numero')
+        if cnpj and telefone and nomeEmpresa and endereco and bairro and numero:
+            novoFornecedor = Fornecedor(
+                cnpj = cnpj,
+                telefone = telefone,
+                nomeEmpresa = nomeEmpresa,
+                endereco = endereco,
+                bairro = bairro,
+                numero = numero
+            )
+            novoFornecedor.save()
+            return messages.success(request, 'Cadastrado com sucesso')
+    produtos = Produto.objects.all()
+    contexto = {'produtos':produtos}
+    return render(request, 'empresa/fornecedor.html', contexto)
+
+def EntregasFeitas(request):
+    if request.method == 'POST':
+        cnpj = request.POST.get('cnpj')
+        totalRecebido = request.POST.get('totalproduto')
+        notaFiscal = request.POST.get('notaFiscal')
+        idproduto = request.POST.get('id_produto')
+        cnpjFornecedor = Fornecedor.objects.filter(cnpj=cnpj).first()
+        if cnpjFornecedor:
+            if idproduto:
+                if totalRecebido and notaFiscal and cnpj:
+                    EntregaRecebida = RecebimentoMercadoria(
+                        totalproduto = totalRecebido,
+                        notaFiscal = notaFiscal,
+                        cnpj = cnpj,
+                        idproduto = idproduto
+                    )
+                    ## ele altera o banco do produto
+                    EntregaRecebida.save()
+                    produtoUpdade = get_object_or_404(Produto, idproduto=idproduto)
+                    quantidateUpdate = produtoUpdade.quantidade + totalRecebido
+                    produtoUpdade.quantidade = quantidateUpdate
+                    produtoUpdade.save()
+                    return messages.success(request, 'Entrega salva')
+                else:
+                    return messages.error(request, 'Adicione todos os campos necessarios')
+            else:
+                return messages.error(request,'Erro ao pegar Id do produto')
+        else:
+            return messages.error(request, 'Não tem um Fornecedor com esse CNPJ')
+
+def historiocoEntregas(request):
+    mes_selecionado = request.GET.get('mes', None)
+    if mes_selecionado:
+        mes = int(mes_selecionado)
+        entregas = RecebimentoMercadoria.objects.filter(datarecebeu=mes)
+    return render(request, 'empresa/historicoDeEntregas.html', {'entregas': entregas})

@@ -47,23 +47,25 @@ def home(request):
 ### função do menu do estoque
 #####
 def estoque(request):
-    produtos = Produto.objects.all()
+    produtos = Produto.objects.all(is_active=True)
     contexto = {'produtos': produtos}
     return render(request, 'estoque/estoque.html', contexto)
 
-### função de deletar produto, mas não tem html
+### função de deixar falso o produto, mas não tem html
 #####
 def deletarProduto(request):
     if request.method == 'POST':
         idproduto = request.POST.get('idprodutodelete')
-        print(idproduto)
         if idproduto:
-            produto = Produto.objects.filter(idproduto=idproduto).first()
-            produto.delete()
+            isDesativar = Produto(
+                idproduto = idproduto,
+                is_active = False
+            )
+            isDesativar.save()
             messages.success(request, 'Removido com sucesso!')
             return redirect('home')
         else:
-            messages.error(request, 'Erro em deletar dados')
+            messages.error(request, 'Erro em desativar produto')
     else:
         messages.error(request, 'methodo não permitido')
         return redirect('estoque')
@@ -79,15 +81,22 @@ def descricaoProduto(request):
 ### função de editar o produto
 ######
 def editarProduto(request):
+    idproduto = request.POST.get('idprodutoeditar')
     if request.method == 'POST':
-        idproduto = request.POST.get('idprodutoeditar')
-        if idproduto:
-            produto = get_object_or_404(Produto, idproduto=idproduto)
-            produto.preco = request.form.get('precoi')
-            produto.descricao = request.form.get('descricaoi')
-            produto.quantidade = request.form.get('quantidadei')
-            produto.controlado = request.form.get('controladoi')
-            produto.save()
+        idDoProduto = request.POST.get('dadosIdProduto')
+        if idDoProduto:
+            descricao = request.POST.get('descricaoi')
+            preco = request.POST.get('precoi')
+            quantidade = request.POST.get('quantidadei')
+            controlado = request.POST.get('controladoi')
+            updateProduto = Produto(
+                idproduto = idDoProduto,
+                preco = preco,
+                descricao = descricao,
+                quantidade = quantidade,
+                controlado = controlado
+            )
+            updateProduto.save()
             return redirect('estoque')
     dadosprodutos = Produto.objects.filter(idproduto=idproduto).first()
     dados = {'dados': dadosprodutos}
@@ -102,16 +111,20 @@ def adicionarProdutos(request):
         preco = request.POST.get('preco')
         quantidade = request.POST.get('quantidade')
         controlado = request.POST.get('controlado')
-        try:
-            produtoNovo = Produto(
-                nome=nome,
-                descricao=descricao,
-                preco=preco,
-                quantidade=quantidade,
-                controlado=controlado)
-            produtoNovo.save()
-            messages.success(request, 'Produto adicionado com sucesso!')  
-            return redirect('estoque')
-        except:
-            return messages.error(request, 'Erro ao adicionar')
+        if nome and descricao and preco and quantidade and controlado:
+            try:
+                produtoNovo = Produto(
+                    nome=nome,
+                    descricao=descricao,
+                    preco=preco,
+                    quantidade=quantidade,
+                    controlado=controlado
+                )
+                produtoNovo.save()
+                messages.success(request, 'Produto adicionado com sucesso!')  
+                return redirect('estoque')
+            except:
+                return messages.error(request, 'Erro ao adicionar')
+        else:
+            return messages.error(request, 'Preencha todos os dados necessario')
     return render(request, 'estoque/adicionar.html')

@@ -10,26 +10,30 @@ def index(request):
         idproduto = request.POST.get('id_produto')
         quantidade = request.POST.get('quantidade')
         valor = request.POST.get('valor')
-        try:
-            venda = SaidaMercadoria(
-                quantidade = quantidade,
-                valor = valor,
-                datacompra = datetime.date.today,
-                idproduto = idproduto
-            )
-            venda.save()
-            # ele altera o banco de produto caso a venda seja feita
-            produtoModel = get_object_or_404(Produto, idproduto=idproduto)
-            quantidadeUpdrate = produtoModel.quantidade - quantidade
-            produtoModel.quantidade = quantidadeUpdrate
-            produtoModel.save()
-            return messages.success(request, 'Cadastrada com sucesso')
-        except:
-            return messages.error(request, 'Erro ao salvar dados')
+        if quantidade and valor:
+            try:
+                venda = SaidaMercadoria(
+                    quantidade = quantidade,
+                    valor = valor,
+                    datacompra = datetime.date.today,
+                    idproduto = idproduto
+                )
+                venda.save()
+                # ele altera o banco de produto caso a venda seja feita
+                produtoModel = get_object_or_404(Produto, idproduto=idproduto)
+                quantidadeUpdrate = produtoModel.quantidade - quantidade
+                produtoModel.quantidade = quantidadeUpdrate
+                produtoModel.save()
+                return messages.success(request, 'Cadastrada com sucesso')
+            except:
+                return messages.error(request, 'Erro ao salvar dados')
+        else:
+            return messages.error(request, 'Preencha todos os dados')
     produtos = Produto.objects.all()
     contexto = {'produtos': produtos}
     return render(request, 'compras/venda.html',contexto)
 
+#menu de vendas
 def menuVendas(request):
     return render(request, 'compras/menuVenda.html')
 

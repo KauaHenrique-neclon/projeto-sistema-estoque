@@ -30,7 +30,7 @@
                 <input type="text" id="controladoi" name="controladoi" required>
             </div>
             {% if dados %}
-            <button type="submit" class="submit-button">Salvar Alterações</button>
+            <button type="submit" id="dadosIdProduto" value="{{ dados.idproduto }}" class="submit-button">Salvar Alterações</button>
             {% endif %}
         </form>
         <a href="{% url 'estoque' %}" class="back-button">Voltar</a>
